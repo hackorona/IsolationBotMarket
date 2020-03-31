@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ConsoleApp1.Models;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 
@@ -14,12 +15,7 @@ namespace ConsoleApp1
         static ITelegramBotClient botClient;
         static void Main(string[] args)
         {
-         
-            botClient = new TelegramBotClient("1007044543:AAHOF5pBe8Peva6DUC2fq1cQWNPEluSjxS4");
-            var me = botClient.GetMeAsync().Result;
-            Console.WriteLine($"Hello, World! I am user {me.Id} and my name is {me.FirstName}.") ;
-            botClient.OnMessage += Bot_OnMessage; 
-            botClient.StartReceiving(); 
+            new MessageHandler("");
             Thread.Sleep(int.MaxValue);
       
         }
