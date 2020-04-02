@@ -35,20 +35,24 @@ namespace ConsoleApp1.Models
         }
         public void UpdateLastName(string name)
         {
-            _firstName = name;
+            _lastName = name;
             state = UserState.RequireCity;
 
         }
         public void UpdateCity(string name)
         {
-            _firstName = name;
+            _city = name;
             state = UserState.RequireAddress;
 
         }
         public void UpdateAddress(string name)
         {
-            _firstName = name;
+            _address = name;
             state = UserState.Complete;
+        }
+        public string UserData()
+        {
+            return $"{_firstName} {_id}";
         }
     }
 }

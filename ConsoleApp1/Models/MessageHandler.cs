@@ -14,16 +14,18 @@ namespace ConsoleApp1.Models
         private TelegramBotClient botClient;
         private Queue<MessageEventArgs> _messagesQueue;
         private Management _management;
+        private ProductsManagement _productsManagement;
         public MessageHandler(string _apiKey)
         {
             _management = new Management();
             _messagesQueue = new Queue<MessageEventArgs>();
             botClient = new TelegramBotClient(_apiKey);
+            _productsManagement = new ProductsManagement();
             var me = botClient.GetMeAsync().Result;
             Console.WriteLine($"Hello, World! I am user {me.Id} and my name is {me.FirstName}.");
             botClient.OnMessage += Bot_OnMessage;
             botClient.StartReceiving();
-            Task.Run(HandleMessagesInQueue);
+            Task.Run(() => HandleMessagesInQueue());
         }
 
         private void Bot_OnMessage(object sender, MessageEventArgs e)
@@ -64,10 +66,10 @@ namespace ConsoleApp1.Models
                 _ = ParseRegistartion(_management.GetUserById(uId), e);
                 return;
             }
+
             if (e.Message.Text != null)
             {
-                Console.WriteLine($"Received a text message in chat {e.Message.Chat.Id}.");
-                await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: "You said:\n" + e.Message.Text, replyToMessageId: e.Message.MessageId);
+                _ = ParseAction(_management.GetUserById(uId), e);
             }
         }
 
@@ -93,7 +95,45 @@ namespace ConsoleApp1.Models
                 case UserState.RequireAddress:
                     user.UpdateAddress(e.Message.Text);
                     await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: $"תודה רבה הרישום הצלחי");
+                    await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: $".'.... אם אתה רוצה לשתף משהו, אנא כתוב 'ישלי ....'. אם אתה זקוק למשהו, אנא כתוב 'צריך");
                     return;
+            }
+        }
+
+        private async Task ParseAction(User user, MessageEventArgs e)
+        {
+            string request;
+            List<string> _input = e.Message.Text.Split(' ').ToList();
+            User _user;
+
+            var uId = e.Message.Chat.Id;
+            string action = _input[0];
+            _input.RemoveAt(0);
+            request = string.Join(" ", _input);
+            if (action == "צריך" || action == "יש")
+            {
+                if (action == "יש")
+                {
+                    _productsManagement.AddProduct(request, uId);
+                    await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: $"תודה רבה");
+                }
+                else
+                {
+                   long userWithProduct = _productsManagement.GetProduct(request);
+                    if(userWithProduct != 0)
+                    {
+                       _user = _management.GetUserById(userWithProduct);
+                        await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: $"{_user.UserData()}");
+                        await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: $"תודה רבה");
+                    }
+                }
+             
+
+            }
+            else if (e.Message.Text != null)
+            {
+                Console.WriteLine($"Received a text message in chat {e.Message.Chat.Id}.");
+                await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: "You said:\n" + e.Message.Text, replyToMessageId: e.Message.MessageId);
             }
         }
     }

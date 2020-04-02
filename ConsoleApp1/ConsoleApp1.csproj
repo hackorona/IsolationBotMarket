@@ -44,6 +44,8 @@
   <ItemGroup>
     <Compile Include="Models\Management.cs" />
     <Compile Include="Models\MessageHandler.cs" />
+    <Compile Include="Models\Product.cs" />
+    <Compile Include="Models\ProductsManagement.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
