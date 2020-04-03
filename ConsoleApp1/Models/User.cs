@@ -21,6 +21,7 @@ namespace ConsoleApp1.Models
         private string _lastName;
         private string _city;
         private string _address;
+        private int _points;
         public UserState state;
         public User(long id)
         {
