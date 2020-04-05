@@ -32,5 +32,18 @@ namespace ConsoleApp1.Models
         {
             return _users[id];
         }
+
+        public int GetPoints(long id)
+        {
+            return _users[id].GetPoints();
+        }
+        public void AddPoint(long id)
+        {
+            _users[id].AddPoint();
+        }
+        public void SubstractPoint(long id)
+        {
+            _users[id].SubstractPoint();
+        }
     }
 }

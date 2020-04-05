@@ -115,16 +115,31 @@ namespace ConsoleApp1.Models
                 if (action == "יש")
                 {
                     _productsManagement.AddProduct(request, uId);
+                    _management.AddPoint(uId);
                     await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: $"תודה רבה");
                 }
                 else
                 {
-                   long userWithProduct = _productsManagement.GetProduct(request);
-                    if(userWithProduct != 0)
+                    long userWithProduct = _productsManagement.GetProduct(request);
+
+                    if (_management.GetPoints(uId) >= 0)
                     {
-                       _user = _management.GetUserById(userWithProduct);
-                        await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: $"{_user.UserData()}");
-                        await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: $"תודה רבה");
+                        if (userWithProduct != 0)
+                        {
+                            _user = _management.GetUserById(userWithProduct);
+                            _management.SubstractPoint(uId);
+                            await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: $"{_user.UserData()}");
+                            await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: $"תודה רבה");
+                        }
+                        else
+                        {
+                            await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: $"אין מוצר :(");
+                            //We need to ask if someone have it, and didt added to the list.
+                        }
+                    }
+                    else
+                    {
+                        await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: $"אין לך נקודות");
                     }
                 }
              

@@ -27,6 +27,7 @@ namespace ConsoleApp1.Models
         {
             _id = id;
             state = UserState.RequireFirstName;
+            _points = 3;
         }
 
         public void UpdateFirstName(string name)
@@ -54,6 +55,19 @@ namespace ConsoleApp1.Models
         public string UserData()
         {
             return $"{_firstName} {_id}";
+        }
+
+        public int GetPoints()
+        {
+            return _points;
+        }
+        public void AddPoint()
+        {
+            _points++;
+        }
+        public void SubstractPoint()
+        {
+            _points--;
         }
     }
 }
